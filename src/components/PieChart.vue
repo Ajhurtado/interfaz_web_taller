@@ -10,15 +10,18 @@ import { Chart as ChartJS, Tooltip, Legend, ArcElement } from 'chart.js'
 ChartJS.register(Tooltip, Legend, ArcElement)
 
 export default {
-  props: ['attentionStats'], // { trueCount: 20, falseCount: 10 }
+  name: 'PieChart',
+  props: ['attentionStats'],
   computed: {
     chartData() {
       return {
-        labels: ['Atención ≥ 80%', 'Atención < 80%'],
+        labels: ['Atención Excelente (≥ 80%)', 'Atención Suficiente (< 80%)'],
         datasets: [
           {
             backgroundColor: ['#4CAF50', '#F44336'],
             data: [this.attentionStats.trueCount, this.attentionStats.falseCount],
+            borderColor: '#2D3748',
+            borderWidth: 2
           }
         ]
       }
@@ -26,7 +29,39 @@ export default {
     options() {
       return {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: {
+                size: 14,
+                weight: 'bold'
+              },
+              color: '#E2E8F0'
+            }
+          },
+          tooltip: {
+            backgroundColor: '#4A5568',
+            titleColor: '#E2E8F0',
+            bodyColor: '#CBD5E0',
+            borderColor: '#A0AEC0',
+            borderWidth: 1,
+            cornerRadius: 4,
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                if (context.parsed !== null) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const value = context.parsed;
+                  const percentage = ((value / total) * 100).toFixed(2) + '%';
+                  return `${label}: ${percentage} (${value})`;
+                }
+                return label;
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -36,8 +71,12 @@ export default {
 
 <style scoped>
 .pie-container {
-  height: 300px; /* Altura fija necesaria para evitar crecimiento infinito */
-  width: 300px;  /* Puedes ajustar a tu gusto */
-  margin: auto;
+  height: 400px; /* Aumentado para que el gráfico sea más grande */
+  width: 100%; /* Ocupará todo el ancho disponible de su contenedor */
+  margin: 20px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 </style>

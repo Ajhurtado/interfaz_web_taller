@@ -1,34 +1,90 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest" target="_blank" rel="noopener">unit-jest</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+  <v-container class="hello-container">
+    <v-card class="pa-6 rounded-lg elevation-4">
+      <h1 class="text-h4 text-center mb-6">{{ msg }}</h1>
+
+      <p class="text-body-1 text-center mb-8">
+        Para una guía y recetas sobre cómo configurar / personalizar este proyecto,<br>
+        visita la
+        <a href="https://cli.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-primary">documentación de vue-cli</a>.
+      </p>
+
+      <v-row class="mb-6">
+        <v-col cols="12" md="6">
+          <h3 class="text-h6 mb-3 text-secondary">Plugins CLI Instalados</h3>
+          <v-list dense>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener" class="text-decoration-none text-info">babel</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener" class="text-decoration-none text-info">router</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-jest" target="_blank" rel="noopener" class="text-decoration-none text-info">unit-jest</a>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-col>
+
+        <v-col cols="12" md="6">
+          <h3 class="text-h6 mb-3 text-secondary">Enlaces Esenciales</h3>
+          <v-list dense>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-info">Core Docs</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://forum.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-info">Forum</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://chat.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-info">Community Chat</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://twitter.com/vuejs" target="_blank" rel="noopener" class="text-decoration-none text-info">Twitter</a>
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>
+                <a href="https://news.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-info">News</a>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-col>
+      </v-row>
+
+      <div class="text-center mt-8">
+        <h3 class="text-h6 mb-3 text-secondary">Ecosistema</h3>
+        <v-chip-group column>
+          <v-chip class="ma-2" color="blue-lighten-2" label>
+            <a href="https://router.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-white">vue-router</a>
+          </v-chip>
+          <v-chip class="ma-2" color="green-lighten-2" label>
+            <a href="https://vuex.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-white">vuex</a>
+          </v-chip>
+          <v-chip class="ma-2" color="purple-lighten-2" label>
+            <a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener" class="text-decoration-none text-white">vue-devtools</a>
+          </v-chip>
+          <v-chip class="ma-2" color="orange-lighten-2" label>
+            <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener" class="text-decoration-none text-white">vue-loader</a>
+          </v-chip>
+          <v-chip class="ma-2" color="red-lighten-2" label>
+            <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener" class="text-decoration-none text-white">awesome-vue</a>
+          </v-chip>
+        </v-chip-group>
+      </div>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -40,20 +96,19 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.hello-container {
+  max-width: 960px;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+
+/* Usamos las variables CSS de Vuetify para los colores */
+.text-primary { color: var(--v-theme-primary) !important; }
+.text-secondary { color: var(--v-theme-secondary) !important; }
+.text-info { color: var(--v-theme-info) !important; }
+
+.v-chip a {
+  text-decoration: none;
 }
 </style>
