@@ -1,10 +1,20 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+      <Dashboard/>
 </template>
+
+<script>
+import SimpleDashboard from '@/views/SimpleDashBoard.vue'
+import Dashboard from '@/views/Dashboard.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Dashboard,
+    SimpleDashboard
+  }
+}
+</script>
+
 
 <style>
 #app {
