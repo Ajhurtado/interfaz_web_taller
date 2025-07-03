@@ -8,10 +8,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const emit = defineEmits(['groupSelected'])
+defineProps({
+  groups: Array // <- recibe lista desde el Dashboard
+})
 
-const groups = ref(['Grupo A', 'Grupo B', 'Grupo C'])
+const emit = defineEmits(['groupSelected'])
 
 function selectGroup(group) {
   emit('groupSelected', group)
