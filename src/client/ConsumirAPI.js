@@ -1,32 +1,56 @@
 import axios from "axios"
 
-// 👇 Función que transforma un grupo del JSON en el formato esperado
-const transformarDatosGrupo = (grupoJson, nombreGrupo) => {
-  const segundos = grupoJson[nombreGrupo]
+const transformarDatosGrupo = (data, nombreGrupo) => {
+  const segundos = data[nombreGrupo]
 
-  const trueCount = segundos.filter(d => d.atencion >= 0.8).length
+  if (!Array.isArray(segundos)) return null
+
+  // Pastel: cuántos segundos están atentos
+  const trueCount = segundos.filter(d => d.atencion_promedio >= 0.8).length
   const falseCount = segundos.length - trueCount
 
-  const secondBySecond = segundos.map(d => ({
-    second: d.segundo,
-    attention: Math.round(d.atencion * 100)
+  // Gráfico de promedio
+  const promedioPorSegundo = segundos.map(d => ({
+    segundo: d.segundo,
+    atencion_promedio: d.atencion_promedio
   }))
 
   return {
     groupName: nombreGrupo,
     attentionStats: { trueCount, falseCount },
-    secondBySecond
+    promedioPorSegundo,
+    segundos // ⬅️ Agregamos esto
   }
 }
 
-// 👇 Función que consulta y transforma todos los grupos
+export const transformarDatosPorPersona = (segundos) => {
+  if (!Array.isArray(segundos)) return {}
+
+  const personas = {}
+
+  segundos.forEach(seg => {
+    seg.personas?.forEach(p => {
+      if (!personas[p.id]) {
+        personas[p.id] = []
+      }
+      personas[p.id].push({
+        segundo: seg.segundo,
+        atencion: p.atencion,
+        color: p.color
+      })
+    })
+  })
+
+  return personas
+}
+
 export const consultarMatriculaDatosFachada = async () => {
   const respuesta = await axios.get("http://localhost:8081/api/atencion/v1/archivosjson")
-  const data = respuesta.data // ejemplo: { Grupo_55: [...], Grupo_99: [...] }
+  const data = respuesta.data
 
   const gruposTransformados = Object.keys(data).map(nombreGrupo =>
     transformarDatosGrupo(data, nombreGrupo)
   )
 
-  return gruposTransformados
+  return gruposTransformados.filter(g => g !== null)
 }
