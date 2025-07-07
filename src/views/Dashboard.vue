@@ -1,17 +1,20 @@
 <template>
   <v-container fluid class="dashboard-container pa-6">
     <v-row>
-      <!-- Filtro de Grupo -->
+      <!-- Filtro de Grupo + Botón Actualizar -->
       <v-col cols="12">
         <v-card class="pa-4 mb-6 rounded-lg elevation-4">
-          <h2 class="text-h6 text-center mb-4 text-primary">Filtro de Grupo</h2>
+          <div class="d-flex align-center justify-space-between">
+            <h2 class="text-h6 text-primary">Filtro de Grupo</h2>
+            <v-btn color="primary" @click="actualizarGruposDesdeCatalogo">Actualizar</v-btn>
+          </div>
           <GroupFilter :groups="groupNames" @groupSelected="loadGroupData" />
         </v-card>
       </v-col>
 
       <!-- Si se selecciona un grupo específico -->
       <template v-if="selectedGroup !== 'Todos los grupos' && selectedGroup">
-        <!-- Gráfico de pastel (atención promedio) -->
+        <!-- Gráfico de pastel -->
         <v-col cols="12">
           <v-card class="pa-4 mb-6 rounded-lg elevation-4">
             <h2 class="text-h6 text-center text-primary mb-4">Atención Promedio - Gráfico de Pastel</h2>
@@ -42,7 +45,7 @@
         </v-col>
       </template>
 
-      <!-- Si se selecciona "Todos los grupos" -->
+      <!-- Vista para "Todos los grupos" -->
       <template v-if="selectedGroup === 'Todos los grupos'">
         <v-col
           v-for="group in groupDataList"
@@ -66,29 +69,38 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+
+import PieChart from '@/components/PieChart.vue'
 import BarChartPromedio from '@/components/BarChartPromedio.vue'
 import BarChartIndividual from '@/components/BarChart.vue'
-import PieChart from '@/components/PieChart.vue'
 import GroupFilter from '@/components/GroupFilter.vue'
-import { consultarMatriculaDatosFachada,transformarDatosPorPersona } from '@/client/ConsumirAPI.js'
+import { transformarDatosGrupo, transformarDatosPorPersona } from '@/client/transformaciones.js'
+import { consultarMatriculaDatosFachada } from '@/client/ConsumirAPI.js'
 
 const selectedGroup = ref('')
-const groupDataList = ref([])
+const archivosDisponibles = ref([]) // nombres del filtro dinámico
+const groupDataList = ref([])       // todos los datos de grupos (opcional para "Todos los grupos")
 
 const attentionStats = ref({ trueCount: 0, falseCount: 0 })
-const generalSecondBySecond = ref([]) // atención promedio por segundo
-const personas = ref({}) // atención individual por persona
+const generalSecondBySecond = ref([])
+const personas = ref({})
 
-onMounted(async () => {
-  groupDataList.value = await consultarMatriculaDatosFachada()
-})
+// Computed para el filtro
+const groupNames = computed(() => ['Todos los grupos', ...archivosDisponibles.value])
 
-const groupNames = computed(() => [
-  'Todos los grupos',
-  ...groupDataList.value.map(g => g.groupName)
-])
+// Función para actualizar lista de archivos desde /catalogoarchivos
+async function actualizarGruposDesdeCatalogo() {
+  try {
+    const res = await axios.get('http://localhost:8081/api/atencion/v1/archivosjson/catalogoarchivos')
+    archivosDisponibles.value = res.data.map(nombre => nombre.replace('.json', ''))
+  } catch (err) {
+    console.error("Error al obtener nombres de archivos:", err)
+  }
+}
 
-function loadGroupData(groupName) {
+// Función principal para cargar datos de un grupo
+async function loadGroupData(groupName) {
   selectedGroup.value = groupName
 
   if (groupName === 'Todos los grupos') {
@@ -98,15 +110,29 @@ function loadGroupData(groupName) {
     return
   }
 
-  const grupo = groupDataList.value.find(g => g.groupName === groupName)
-  if (grupo) {
+  try {
+    const url = `http://localhost:8081/api/atencion/v1/archivosjson/${groupName}.json`
+    const res = await axios.get(url)
+
+    // Puede venir como string, intenta parsear si es necesario
+    const rawData = typeof res.data === 'string' ? JSON.parse(res.data) : res.data
+
+    const grupo = transformarDatosGrupo({ [groupName]: rawData }, groupName)
+    const individual = transformarDatosPorPersona(rawData)
+
     attentionStats.value = grupo.attentionStats
     generalSecondBySecond.value = grupo.promedioPorSegundo
-
-    // ✅ Corregimos aquí para usar los "segundos" reales
-    personas.value = transformarDatosPorPersona(grupo.segundos)
+    personas.value = individual
+  } catch (err) {
+    console.error("Error al cargar datos del grupo:", err)
   }
 }
+
+// Al iniciar: consultar archivos disponibles y cargar todos los datos si se requiere
+onMounted(async () => {
+  await actualizarGruposDesdeCatalogo()
+  groupDataList.value = await consultarMatriculaDatosFachada() // solo para "Todos los grupos"
+})
 </script>
 
 <style scoped>

@@ -29,12 +29,26 @@ export default {
       }
     }
 
+    const backgroundColors = this.dataPromedio.map(s => {
+    const porcentaje = Math.round(s.atencion_promedio * 100)
+
+      if (porcentaje === 100) {
+        return '#1E3A8A' // azul muy oscuro
+      } else if (porcentaje >= 50 && porcentaje < 100) {
+        return '#284fbf' // azul medio
+      } else if (porcentaje >= 10 && porcentaje < 50) {
+        return '#3365f5' // azul claro
+      } else {
+        return 'rgba(0,0,0,0)' // 0% no visible
+      }
+    })
+
     return {
       labels: this.dataPromedio.map(s => `Segundo ${s.segundo}`),
       datasets: [{
         label: '% Atención Promedio',
         data: this.dataPromedio.map(s => Math.round(s.atencion_promedio * 100)),
-        backgroundColor: '#63B3ED',
+        backgroundColor: backgroundColors,
         borderColor: '#4A5568',
         borderWidth: 0
       }]
@@ -47,7 +61,10 @@ export default {
         scales: {
           y: {
             beginAtZero: true,
-            max: 100
+            max: 100,
+            ticks: {
+              stepSize: 10
+            }
           }
         }
       }
@@ -58,3 +75,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.chart-wrapper {
+  position: relative;
+  height: 600px;
+  width: 100%;
+}
+</style>
